@@ -6,6 +6,5 @@ void readFile(char* file);
 FILE* writeFile(char* file);
 // this needs to take another argument... maybe the hashmap? 
 void delFile(char* file);
-void closeFile(FILE* fptr);
 
 #endif

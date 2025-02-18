@@ -50,6 +50,33 @@ void* get(HashMap* map, char* key) {
     return NULL;
 }
 
+char* serialize(HashMap* map) {
+    size_t estimated_size = map->size * 100;
+    char* serialized = (char*)malloc(estimated_size);
+    if (serialized == NULL) {
+        return NULL;
+    }
+    serialized[0] = '\0';
+
+    for (int i = 0; i < map->size; i++) {
+        Node* node = map->array[i];
+        while (node) {
+            char buffer[256];
+            snprintf(buffer, sizeof(buffer), "%s:%s\n", node->key, (char*)node->value);
+            if (strlen(serialized) + strlen(buffer) >= estimated_size) {
+                estimated_size *= 2;
+                serialized = (char*)realloc(serialized, estimated_size);
+                if (serialized == NULL) {
+                    return NULL;
+                }
+            }
+            strcat(serialized, buffer);
+            node = node->next;
+        }
+    }
+    return serialized;
+}
+
 void freeMap(HashMap* map) {
     for (int i = 0; i < map->size; i++) {
         Node* current = map->array[i];

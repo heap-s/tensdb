@@ -2,8 +2,10 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "files.h"
 #include "map.h"
@@ -14,20 +16,25 @@ bool checkDirExists(const char* dirname){
 	if(dir){
 		closedir(dir);
 		return true;
-	}else{
-		return false;
 	}
+	return false;
+}
+
+bool checkFileExists(const char* file) {
+	if (access(file, F_OK) == 0)
+		return true;
+	return false;
 }
 
 // this is certainly vulnerable to path injection
 // due to the lack of input handling and the expansion of the 
 // relative path...
 // FIXME: path injection and path validation
-void createDb(char* name){
+void createDb(char* filename){
 	char* dirname = "~/.tensdb";
 	char constructedPath[512];
 
-	snprintf(constructedPath, sizeof(constructedPath), "%s/%s", dirname, name);
+	snprintf(constructedPath, sizeof(constructedPath), "%s/%s", dirname, filename);
 	
 	if(checkDirExists(dirname) == false){
 		int status = mkdir(dirname, 0644);
@@ -39,4 +46,17 @@ void createDb(char* name){
 	}
 
 	createFile(constructedPath);
+}
+
+void writeKV(char* file, HashMap* map) {
+	if (checkFileExists(file) == false) {
+		perror("KV does not exist");
+		return;
+	}
+
+	char* serializedMap = serialize(map);
+	FILE* fptr = writeFile(file);
+	fprintf(fptr, "%s", serializedMap);
+	fclose(fptr);
+	free(serializedMap);
 }

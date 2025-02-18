@@ -35,7 +35,3 @@ void delFile(char* file){
         perror("Couldn't delete DB");
     }
 }
-
-void closeFile(FILE* fptr){
-    fclose(fptr);
-}

@@ -5,7 +5,9 @@
 #include "map.h"
 #include "ops.h"
 
-bool checkDirExists(char* dirname);
+bool checkDirExists(const char* dirname);
+bool checkFileExists(const char* file);
 void createDb(char* name);
+void writeKV(char* file, HashMap* map);
 
 #endif

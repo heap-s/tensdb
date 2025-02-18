@@ -16,5 +16,6 @@ HashMap* initHashMap(int size);
 void put(HashMap* map, char* key, void* value);
 void* get(HashMap* map, char* key);
 void freeMap(HashMap* map);
+char* serialize(HashMap* map);
 
 #endif
